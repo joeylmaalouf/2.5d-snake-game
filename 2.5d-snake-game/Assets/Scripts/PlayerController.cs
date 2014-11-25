@@ -7,12 +7,10 @@ public class PlayerController : MonoBehaviour
 	public GameObject enemy;
 	public GUIText scoreText;
 	public GUIText statusText;
-	private bool alive;
 	private int score;
 
 	void Start()
 	{
-		this.alive = true;
 		this.score = 0;
 		this.UpdateText();
 		this.statusText.text = "";
@@ -20,21 +18,13 @@ public class PlayerController : MonoBehaviour
 
 	void FixedUpdate()
 	{
-		if (this.alive)
-		{
-			Vector3 movement = new Vector3
-			(
-				Input.GetAxis("Horizontal"),
-				0.0f,
-				Input.GetAxis("Vertical")
-			);
-			this.rigidbody.AddForce(movement * this.speed * Time.deltaTime);
-		}
-		else
-		{
-			this.rigidbody.velocity = Vector3.zero;
-			this.rigidbody.angularVelocity = Vector3.zero;
-		}
+		Vector3 movement = new Vector3
+		(
+			Input.GetAxis("Horizontal"),
+			0.0f,
+			Input.GetAxis("Vertical")
+		);
+		this.rigidbody.AddForce(movement * this.speed * Time.deltaTime);
 	}
 
 	void OnTriggerEnter(Collider other)
@@ -64,9 +54,13 @@ public class PlayerController : MonoBehaviour
 					Quaternion.identity
 				);
 		}
-		else if (other.gameObject.tag == "Enemy")
+	}
+
+	void OnCollisionEnter(Collision other)
+	{
+		if (other.gameObject.tag == "Enemy")
 		{
-			this.alive = false;
+			Time.timeScale = 0.0f;
 			this.statusText.text = "You Lose!\nBetter luck next time!";
 		}
 	}
